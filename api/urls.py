@@ -2,10 +2,14 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
+from .views import TitleViewSet, GenreViewSet, CategoryViewSet
 
 
 router_v1 = DefaultRouter()
 
+router_v1.register(r'titles', TitleViewSet)
+router_v1.register(r'genres', GenreViewSet)
+router_v1.register(r'categories', CategoryViewSet)
 
 urlpatterns = [
     path('v1/', include(router_v1.urls)),
