@@ -2,9 +2,11 @@ from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.db import models
 
-
 User = get_user_model()
 
+def range_of_1_10(value):
+    if not (1 <= value <= 10):
+        raise ValidationError('Оценка должна быть в диапазоне от 1 до 10')
 
 class Title(models.Model):
     name = models.CharField(max_length=100)
@@ -35,22 +37,14 @@ class Genre(models.Model):
 
     def __str__(self):
         return self.name
-=======
-from django.core.exceptions import ValidationError
-from django.db import models
 
-User = get_user_model()
-
-def range_of_1_10(value):
-    if not (1 <= value <= 10):
-        raise ValidationError('Оценка должна быть в диапазоне от 1 до 10')
 
 class BaseForCommAndRev(models.Model):
     text = models.TextField()
     author = models.ForeignKey(
         User, 
         on_delete=models.CASCADE, 
-        related_name="comments",
+        related_name="%(class)ss",
         verbose_name='Автор'
     )
     pub_date = models.DateTimeField(
@@ -58,22 +52,12 @@ class BaseForCommAndRev(models.Model):
         verbose_name='Дата создания'
     )
 
+    class Meta:
+        abstract = True
+
     def __str__(self):
         return self.text
-
-
-class Comments(BaseForCommAndRev):
-    review = models.ForeignKey(
-        Review, 
-        on_delete=models.CASCADE, 
-        related_name="comments",
-        verbose_name='Отзыв'
-    )    
-
-    class Meta:
-        verbose_name = 'комментарий'
-        verbose_name_plural = 'комментарии'
-
+        
 
 class Review(BaseForCommAndRev):
     title = models.ForeignKey(
@@ -88,3 +72,15 @@ class Review(BaseForCommAndRev):
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
 
+
+class Comment(BaseForCommAndRev):
+    review = models.ForeignKey(
+        Review, 
+        on_delete=models.CASCADE, 
+        related_name="comments",
+        verbose_name='Отзыв'
+    )    
+
+    class Meta:
+        verbose_name = 'комментарий'
+        verbose_name_plural = 'комментарии'

@@ -1,26 +1,15 @@
-from django.urls import include, path
+from django.urls import include, re_path
 from rest_framework.routers import DefaultRouter
-from rest_framework_simplejwt.views import (TokenObtainPairView,
-                                            TokenRefreshView)
-from .views import TitleViewSet, GenreViewSet, CategoryViewSet
 
+from .views import CategoryViewSet, GenreViewSet, TitleViewSet
 
-router_v1 = DefaultRouter()
+router = DefaultRouter()
 
-router_v1.register(r'titles', TitleViewSet)
-router_v1.register(r'genres', GenreViewSet)
-router_v1.register(r'categories', CategoryViewSet)
+router.register(r'titles', TitleViewSet)
+router.register(r'genres', GenreViewSet)
+router.register(r'categories', CategoryViewSet)
 
 urlpatterns = [
-    path('v1/', include(router_v1.urls)),
-    path(
-        'v1/auth/token/',
-        TokenObtainPairView.as_view(),
-        name='token_obtain_pair'
-    ),
-    path(
-        'v1/auth/token/refresh/',
-        TokenRefreshView.as_view(),
-        name='token_refresh'
-    ),
+    re_path('', include(router.urls)),
+    
 ]
