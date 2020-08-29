@@ -22,6 +22,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(default=timezone.now)
     bio = models.TextField(max_length=500, blank=True)
     role = models.CharField(max_length=30, blank=True)
+    token = models.CharField(max_length=36, blank=True)
 
     objects = UserManager()
 
@@ -41,6 +42,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         """
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
+
+    def check_token(self, token):
+        return self.token == token
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         """

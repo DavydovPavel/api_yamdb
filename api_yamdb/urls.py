@@ -27,14 +27,14 @@ urlpatterns = [
         TemplateView.as_view(template_name='redoc.html'),
         name='redoc'
     ),
-    path(
-        'v1/auth/token/',
-        TokenObtainPairView.as_view(),
-        name='token_obtain_pair'
-    ),
-    path(
-        'v1/auth/token/refresh/',
-        TokenRefreshView.as_view(),
-        name='token_refresh'
-    ),
+    # path(
+    #     'v1/auth/token/',
+    #     TokenObtainPairView.as_view(),
+    #     name='token_obtain_pair'
+    # ),
+    # path(
+    #     'v1/auth/token/refresh/',
+    #     TokenRefreshView.as_view(),
+    #     name='token_refresh'
+    # ),
 ]

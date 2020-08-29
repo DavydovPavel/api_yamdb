@@ -1,19 +1,56 @@
-from django.contrib.auth import get_user_model
-from rest_framework import generics, viewsets
+from uuid import uuid4
 
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics, permissions, status, viewsets
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Category, Genre, Title
-from .serializers import (CategorySerializer, GenreSerializer, TitleSerializer,
-                          UsersSerializer)
+from .serializers import (CategorySerializer, CreateUserSerializer,
+                          GenreSerializer, TitleSerializer, UsersSerializer,
+                          MyTokenObtainPairSerializer)
 
 User = get_user_model()
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    """
+     Takes a set of user credentials and returns an access and refresh JSON web
+     token pair to prove the authentication of those credentials.
+    """
+    serializer_class = MyTokenObtainPairSerializer
 
 
 class UsersViewSet(viewsets.ViewSetMixin, generics.ListCreateAPIView):
     queryset = User.objects.all()
     serializer_class = UsersSerializer
     # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class CreateUserSet(viewsets.ViewSetMixin, generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = CreateUserSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def perform_create(self, serializer):
+        new_user_email = self.request.data.get('email')
+        new_user_token = str(uuid4())
+
+        if serializer.is_valid():
+            serializer.save(email=new_user_email, token=new_user_token)
+            send_mail(
+                'Тема письма',
+                new_user_token,
+                'from@example.com',  # Это поле "От кого"
+                # Это поле "Кому" (можно указать список адресов)
+                [new_user_email],
+                # Сообщать об ошибках («молчать ли об ошибках?»)
+                fail_silently=False,
+            )
+
+            return Response(status=status.HTTP_200_OK)
 
 
 class TitleViewSet(viewsets.ModelViewSet):
