@@ -14,11 +14,10 @@ class Title(models.Model):
     name = models.CharField(max_length=100)
     year = models.PositiveSmallIntegerField()
     category = models.ForeignKey(
-        'Category', on_delete=models.SET_NULL, null=True)
-    genre = models.ManyToManyField('Genre', blank=True, null=True)
+        'Category', on_delete=models.SET_NULL, related_name='categories', null=True)
+    genre = models.ManyToManyField('Genre', related_name='genres')
     description = models.TextField(null=True, blank=True)
-    rating = models.PositiveIntegerField(null=True, blank=True)
-
+    
     class Meta:
         ordering = ('-id',)
 
@@ -26,7 +25,7 @@ class Title(models.Model):
         return self.name
 
 
-class Category(models.Model):
+class BaseForCategoryGenre(models.Model):
     name = models.CharField(max_length=20)
     slug = models.SlugField(max_length=20, unique=True)
 
@@ -34,12 +33,12 @@ class Category(models.Model):
         return self.name
 
 
-class Genre(models.Model):
-    name = models.CharField(max_length=20)
-    slug = models.SlugField(max_length=20, unique=True)
+class Category(BaseForCategoryGenre):
+    pass
 
-    def __str__(self):
-        return self.name
+
+class Genre(BaseForCategoryGenre):
+    pass
 
 
 class BaseForCommAndRev(models.Model):
