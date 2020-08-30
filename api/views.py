@@ -10,11 +10,12 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Category, Comment, Genre, Review, Title
+
 from .permissions import IsAdminUser
 from .serializers import (CategorySerializer, CommentSerializer,
                           CreateUserSerializer, GenreSerializer,
                           MyTokenObtainPairSerializer, ReviewSerializer,
-                          TitleSerializer, UsersSerializer)
+                          TitleSerializer, UsersSerializer, MeInfoUserSerializer)
 
 User = get_user_model()
 
@@ -40,6 +41,14 @@ class UsersViewSet(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class MeInfoUserSet(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = MeInfoUserSerializer
+
+    def get_object(self):
+        return self.request.user
 
 
 class CreateUserSet(viewsets.ViewSetMixin, generics.CreateAPIView):

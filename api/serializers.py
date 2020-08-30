@@ -41,6 +41,16 @@ class UsersSerializer(serializers.ModelSerializer):
         )
 
 
+class MeInfoUserSerializer(serializers.ModelSerializer):
+    class Meta(object):
+        model = User
+        fields = (
+            'first_name', 'last_name', 'username',
+            'bio', 'email', 'role'
+        )
+        read_only_fields = ('email', 'role')
+
+
 class MyTokenObtainSerializer(serializers.Serializer):
     username_field = User.USERNAME_FIELD
 
