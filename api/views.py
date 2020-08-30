@@ -41,7 +41,8 @@ class CreateUserSet(viewsets.ViewSetMixin, generics.CreateAPIView):
         new_user_token = str(uuid4())
 
         if serializer.is_valid():
-            serializer.save(email=new_user_email, token=new_user_token)
+            serializer.save(username=new_user_email,
+                            email=new_user_email, token=new_user_token)
             send_mail(
                 'Тема письма',
                 new_user_token,
@@ -88,7 +89,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
-        self.review = get_object_or_404(title.reviews, pk=self.kwargs.get('review_id'))
+        self.review = get_object_or_404(
+            title.reviews, pk=self.kwargs.get('review_id'))
         return self.review.comments
 
     def perform_create(self, serializer):
