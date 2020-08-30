@@ -15,7 +15,8 @@ from .permissions import IsAdminUser
 from .serializers import (CategorySerializer, CommentSerializer,
                           CreateUserSerializer, GenreSerializer,
                           MyTokenObtainPairSerializer, ReviewSerializer,
-                          TitleSerializer, UsersSerializer, MeInfoUserSerializer)
+                          TitleSerializer, UsersSerializer,
+                          MeInfoUserSerializer)
 
 User = get_user_model()
 
