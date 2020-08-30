@@ -42,16 +42,16 @@ class Genre(BaseForCategoryGenre):
 
 
 class BaseForCommAndRev(models.Model):
-    text = models.TextField()
+    text = models.TextField('текст')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="%(class)ss",
-        verbose_name='Автор'
+        verbose_name='автор'
     )
     pub_date = models.DateTimeField(
         auto_now=True,
-        verbose_name='Дата создания'
+        verbose_name='дата создания'
     )
 
     class Meta:
@@ -66,9 +66,9 @@ class Review(BaseForCommAndRev):
         Title,
         on_delete=models.CASCADE,
         related_name="reviews",
-        verbose_name='Произведение'
+        verbose_name='произведение'
     )
-    score = models.PositiveSmallIntegerField(validators=[range_of_1_10])
+    score = models.PositiveSmallIntegerField('оценка', validators=[range_of_1_10])
 
     class Meta:
         verbose_name = 'отзыв'
@@ -80,7 +80,7 @@ class Comment(BaseForCommAndRev):
         Review,
         on_delete=models.CASCADE,
         related_name="comments",
-        verbose_name='Отзыв'
+        verbose_name='отзыв'
     )
 
     class Meta:
