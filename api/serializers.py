@@ -16,14 +16,15 @@ class CreateUserSerializer(serializers.ModelSerializer):
         fields = ('email',)
 
 
-class CurrentUserField(Field): 
+class CurrentUserField(Field):
     """
     CurrentUserField заполняет поле пользователем
     из sel.context['request'].
     """
+
     def to_representation(self, value):
         return str(value)
-    
+
     def get_value(self, dictionary):
         return self.context.get('request').user
 

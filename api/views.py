@@ -4,11 +4,13 @@ from django.contrib.auth import get_user_model
 from django.core.mail import send_mail
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, permissions, status, viewsets
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Category, Comment, Genre, Review, Title
+from .permissions import IsAdminUser
 from .serializers import (CategorySerializer, CommentSerializer,
                           CreateUserSerializer, GenreSerializer,
                           MyTokenObtainPairSerializer, ReviewSerializer,
@@ -25,10 +27,19 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
-class UsersViewSet(viewsets.ViewSetMixin, generics.ListCreateAPIView):
+class UsersViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UsersSerializer
-    # permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAdminUser,)
+    filter_backends = (SearchFilter,)
+    search_fields = ('username',)
+    lookup_field = 'username'
+
+    def perform_create(self, serializer):
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CreateUserSet(viewsets.ViewSetMixin, generics.CreateAPIView):
