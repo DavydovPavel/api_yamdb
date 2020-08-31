@@ -80,6 +80,7 @@ class CreateUserSet(viewsets.ViewSetMixin, generics.CreateAPIView):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
+    permission_classes = (permissions.AllowAny,)
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['category', 'genre', 'name', 'year']
 
@@ -87,11 +88,13 @@ class TitleViewSet(viewsets.ModelViewSet):
 class GenreViewSet(viewsets.ModelViewSet):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
+    permission_classes = (permissions.AllowAny,)
 
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = (permissions.AllowAny, IsAdminUser)
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
