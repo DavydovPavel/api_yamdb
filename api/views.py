@@ -10,13 +10,11 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .models import Category, Comment, Genre, Review, Title
-
-from .permissions import IsAdminUser
+from .permissions import IsAdminOrUserOrReadOnly, IsAdminUser
 from .serializers import (CategorySerializer, CommentSerializer,
                           CreateUserSerializer, GenreSerializer,
-                          MyTokenObtainPairSerializer, ReviewSerializer,
-                          TitleSerializer, UsersSerializer,
-                          MeInfoUserSerializer)
+                          MeInfoUserSerializer, MyTokenObtainPairSerializer,
+                          ReviewSerializer, TitleSerializer, UsersSerializer)
 
 User = get_user_model()
 
@@ -96,6 +94,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    permission_classes = (IsAdminOrUserOrReadOnly,)
 
     def get_queryset(self):
         self.title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
@@ -107,6 +106,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = (IsAdminOrUserOrReadOnly,)
 
     def get_queryset(self):
         title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))
