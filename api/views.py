@@ -82,8 +82,8 @@ class TitleViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAdminUser | ReadOnly,]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['category', 'genre', 'name', 'year']
-
-
+    
+    
 class GenreViewSet(mixins.CreateModelMixin,
                       mixins.ListModelMixin,
                       mixins.DestroyModelMixin,
@@ -94,7 +94,7 @@ class GenreViewSet(mixins.CreateModelMixin,
     filter_backends = [filters.SearchFilter]
     search_fields = ['=name']
     lookup_field = 'slug'
-    
+
 
 class CategoryViewSet(mixins.CreateModelMixin,
                       mixins.ListModelMixin,
@@ -110,7 +110,7 @@ class CategoryViewSet(mixins.CreateModelMixin,
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = (IsAdminOrUserOrReadOnly,)
+    permission_classes = [IsAdminUser | ReadOnly,]#(IsAdminOrUserOrReadOnly,)
 
     def get_queryset(self):
         self.title = get_object_or_404(Title, pk=self.kwargs.get('title_id'))

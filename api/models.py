@@ -17,7 +17,8 @@ class Title(models.Model):
         'Category', on_delete=models.SET_NULL, related_name='categories', null=True)
     genre = models.ManyToManyField('Genre', related_name='genres', blank=True)
     description = models.TextField(null=True, blank=True)
-    
+    #rating = models.PositiveIntegerField()
+
     class Meta:
         ordering = ('-id',)
 
