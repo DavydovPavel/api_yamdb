@@ -80,9 +80,10 @@ class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
     permission_classes = [IsAdminUser | ReadOnly,]
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['category', 'genre', 'name', 'year']
-    
+    """ filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['category', 'genre', 'name', 'year'] """
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['=category', '=genre', '=name', '=year']
     
 class GenreViewSet(mixins.CreateModelMixin,
                       mixins.ListModelMixin,
@@ -94,17 +95,17 @@ class GenreViewSet(mixins.CreateModelMixin,
     filter_backends = [filters.SearchFilter]
     search_fields = ['=name']
     lookup_field = 'slug'
-
+    
 
 class CategoryViewSet(mixins.CreateModelMixin,
-                      mixins.ListModelMixin,
+                      mixins.ListModelMixin, 
                       mixins.DestroyModelMixin,
                       viewsets.GenericViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = [IsAdminUser | ReadOnly,]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['=name']
+    search_fields = ['name']
     lookup_field = 'slug'
 
 

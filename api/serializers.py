@@ -125,7 +125,7 @@ class GenreField(serializers.SlugRelatedField):
         serializer = GenreSerializer(value)
         return serializer.data
 
-        
+
 class CategoryField(serializers.SlugRelatedField):
     def to_representation(self, value):
         serializer = CategorySerializer(value)
@@ -142,7 +142,7 @@ class TitleSerializer(serializers.ModelSerializer):
     category = CategoryField(
         slug_field="slug",
         required=False,
-        queryset=Category.objects.all()
+        queryset=Category.objects.all() 
     )
     #rating = serializers.FloatField()
         
