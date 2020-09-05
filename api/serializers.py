@@ -107,14 +107,14 @@ class MyTokenObtainPairSerializer(MyTokenObtainSerializer):
 
 
 class CategorySerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         fields = ['name', 'slug']
         model = Category
 
 
 class GenreSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         fields = ('name', 'slug',)
         model = Genre
@@ -139,15 +139,16 @@ class TitleSerializer(serializers.ModelSerializer):
         many=True,
         queryset=Genre.objects.all()
     )
+    # genre = GenreSerializer(many=True)
     category = CategoryField(
         slug_field="slug",
         required=False,
-        queryset=Category.objects.all() 
+        queryset=Category.objects.all()
     )
     #rating = serializers.FloatField()
-        
+
     class Meta:
-        fields = ("id", "name","year", "description", "genre", "category",)
+        fields = ("id", "name", "year", "description", "genre", "category",)
         model = Title
 
 
