@@ -1,5 +1,5 @@
-from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import models
 
 User = get_user_model()
@@ -24,6 +24,11 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def rating(self):
+        rate = Title.objects.get(pk=self.id).reviews.all().aggregate(models.Avg('score'))
+        return rate['score__avg']
 
 
 class BaseForCategoryGenre(models.Model):
@@ -77,6 +82,9 @@ class Review(BaseForCommAndRev):
     class Meta:
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
+        constraints = [
+            models.UniqueConstraint(fields=['title', 'author'], name='unique_review')
+        ]
 
 
 class Comment(BaseForCommAndRev):

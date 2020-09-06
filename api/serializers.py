@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import Field, empty
+from rest_framework.generics import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Category, Comment, Genre, Review, Title
@@ -23,7 +24,7 @@ class CurrentUserField(Field):
     """
 
     def to_representation(self, value):
-        return str(value)
+        return value.username
 
     def get_value(self, dictionary):
         return self.context.get('request').user
@@ -139,30 +140,52 @@ class TitleSerializer(serializers.ModelSerializer):
         many=True,
         queryset=Genre.objects.all()
     )
-    # genre = GenreSerializer(many=True)
     category = CategoryField(
         slug_field="slug",
         required=False,
         queryset=Category.objects.all()
     )
-    #rating = serializers.FloatField()
 
     class Meta:
-        fields = ("id", "name", "year", "description", "genre", "category",)
+        fields = ("id", "name", "year", "description", "genre", "category", "rating")
         model = Title
+
+
+class TitleDefault:
+    """
+    May be applied as a `default=...` value on a serializer field.
+    Returns the title from url.
+    """
+    requires_context = True
+
+    def __call__(self, serializer_field):
+        title = get_object_or_404(Title, pk=serializer_field.context.get('title_id'))
+        return title.id
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = CurrentUserField()
+    title = serializers.HiddenField(default=TitleDefault())
+
+
+    def get_title(self):
+        return get_object_or_404(Title, pk=self.context.get('title_id'))
 
     class Meta:
-        fields = '__all__'
+        fields = ("id", "text", "author", "score", "pub_date", "title")
         model = Review
+        validators = [
+            serializers.UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=['title', 'author']
+            )
+        ]
 
 
 class CommentSerializer(serializers.ModelSerializer):
     author = CurrentUserField()
+    review = serializers.StringRelatedField(required=False)
 
     class Meta:
-        fields = '__all__'
+        fields = ("id", "text", "author", "pub_date", "review")
         model = Comment
