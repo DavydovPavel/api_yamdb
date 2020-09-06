@@ -11,7 +11,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from .filters import TitleFilter
-from .models import Category, Comment, Genre, Review, Title
+from .models import Category, Genre, Title
 from .permissions import IsAdminOrUserOrReadOnly, IsAdminUser, ReadOnly
 from .serializers import (CategorySerializer, CommentSerializer,
                           CreateUserSerializer, GenreSerializer,
@@ -22,10 +22,6 @@ User = get_user_model()
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
-    """
-     Takes a set of user credentials and returns an access and refresh JSON web
-     token pair to prove the authentication of those credentials.
-    """
     serializer_class = MyTokenObtainPairSerializer
 
 
@@ -67,10 +63,8 @@ class CreateUserSet(viewsets.ViewSetMixin, generics.CreateAPIView):
             send_mail(
                 'Тема письма',
                 new_user_token,
-                'from@example.com',  # Это поле "От кого"
-                # Это поле "Кому" (можно указать список адресов)
+                'from@example.com',
                 [new_user_email],
-                # Сообщать об ошибках («молчать ли об ошибках?»)
                 fail_silently=False,
             )
 
@@ -93,7 +87,7 @@ class GenreViewSet(mixins.CreateModelMixin,
     serializer_class = GenreSerializer
     permission_classes = [IsAdminUser | ReadOnly]
     filter_backends = [filters.SearchFilter]
-    search_fields = ['name', 'slug']
+    search_fields = ['name']
     lookup_field = 'slug'
 
 

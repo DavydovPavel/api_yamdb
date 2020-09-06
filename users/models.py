@@ -1,20 +1,15 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.mail import send_mail
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 from .managers import UserManager
 
 
 class User(AbstractUser):
-    """
-    An abstract base class implementing a fully featured User model with
-    admin-compliant permissions.
-
-    """
-    email = models.EmailField(max_length=40, unique=True)
-    bio = models.TextField(max_length=500, blank=True)
-    role = models.CharField(max_length=30, default='user')
-    token = models.CharField(max_length=36, blank=True)
+    email = models.EmailField(_('email'), max_length=40, unique=True)
+    bio = models.TextField(_('description'), max_length=500, blank=True)
+    role = models.CharField(_('role'), max_length=30, default='user')
+    token = models.CharField(_('token'), max_length=36, blank=True)
 
     objects = UserManager()
 
@@ -29,17 +24,8 @@ class User(AbstractUser):
         return self.email
 
     def get_full_name(self):
-        """
-        Returns the first_name plus the last_name, with a space in between.
-        """
         full_name = '%s %s' % (self.first_name, self.last_name)
         return full_name.strip()
 
     def check_token(self, token):
         return self.token == token
-
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        """
-        Sends an email to this User.
-        """
-        send_mail(subject, message, from_email, [self.email], **kwargs)

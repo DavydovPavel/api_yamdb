@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from rest_framework.fields import Field, empty
+from rest_framework.fields import Field
 from rest_framework.generics import get_object_or_404
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -20,7 +20,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
 class CurrentUserField(Field):
     """
     CurrentUserField заполняет поле пользователем
-    из sel.context['request'].
+    из self.context['request'].
     """
 
     def to_representation(self, value):
@@ -137,17 +137,20 @@ class TitleSerializer(serializers.ModelSerializer):
     genre = GenreField(
         slug_field="slug",
         required=False,
+        label='Жанр',
         many=True,
         queryset=Genre.objects.all()
     )
     category = CategoryField(
         slug_field="slug",
         required=False,
+        label='Категория',
         queryset=Category.objects.all()
     )
 
     class Meta:
-        fields = ("id", "name", "year", "description", "genre", "category", "rating")
+        fields = ("id", "name", "year", "description",
+                  "genre", "category", "rating")
         model = Title
 
 
@@ -159,14 +162,14 @@ class TitleDefault:
     requires_context = True
 
     def __call__(self, serializer_field):
-        title = get_object_or_404(Title, pk=serializer_field.context.get('title_id'))
+        title = get_object_or_404(
+            Title, pk=serializer_field.context.get('title_id'))
         return title.id
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = CurrentUserField()
     title = serializers.HiddenField(default=TitleDefault())
-
 
     def get_title(self):
         return get_object_or_404(Title, pk=self.context.get('title_id'))

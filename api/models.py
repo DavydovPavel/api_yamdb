@@ -11,15 +11,23 @@ def range_of_1_10(value):
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField("Название", max_length=100)
     year = models.PositiveSmallIntegerField()
     category = models.ForeignKey(
-        'Category', on_delete=models.SET_NULL, related_name='categories', null=True)
+        'Category',
+        on_delete=models.SET_NULL,
+        related_name='categories',
+        verbose_name='Категория',
+        blank=True,
+        null=True
+    )
     genre = models.ManyToManyField('Genre', related_name='genres', blank=True)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField("Описание", null=True, blank=True)
     #rating = models.PositiveIntegerField()
 
     class Meta:
+        verbose_name = 'Произведение'
+        verbose_name_plural = 'Произведения'
         ordering = ('-id',)
 
     def __str__(self):
@@ -27,17 +35,18 @@ class Title(models.Model):
 
     @property
     def rating(self):
-        rate = Title.objects.get(pk=self.id).reviews.all().aggregate(models.Avg('score'))
+        rate = Title.objects.get(
+            pk=self.id).reviews.all().aggregate(models.Avg('score'))
         return rate['score__avg']
 
 
 class BaseForCategoryGenre(models.Model):
-    name = models.CharField(max_length=20)
+    name = models.CharField("Наименование", max_length=20)
     slug = models.SlugField(max_length=20, unique=True)
-    
+
     class Meta:
         abstract = True
-        
+
     def __str__(self):
         return self.name
 
@@ -45,9 +54,17 @@ class BaseForCategoryGenre(models.Model):
 class Category(BaseForCategoryGenre):
     pass
 
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
 
 class Genre(BaseForCategoryGenre):
     pass
+
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
 
 
 class BaseForCommAndRev(models.Model):
@@ -77,13 +94,18 @@ class Review(BaseForCommAndRev):
         related_name="reviews",
         verbose_name='произведение'
     )
-    score = models.PositiveSmallIntegerField('оценка', validators=[range_of_1_10])
+    score = models.PositiveSmallIntegerField(
+        'оценка', validators=[range_of_1_10]
+    )
 
     class Meta:
         verbose_name = 'отзыв'
         verbose_name_plural = 'отзывы'
         constraints = [
-            models.UniqueConstraint(fields=['title', 'author'], name='unique_review')
+            models.UniqueConstraint(
+                fields=['title', 'author'],
+                name='unique_review'
+            )
         ]
 
 
