@@ -23,7 +23,6 @@ class Title(models.Model):
     )
     genre = models.ManyToManyField('Genre', related_name='genres', blank=True)
     description = models.TextField("Описание", null=True, blank=True)
-    #rating = models.PositiveIntegerField()
 
     class Meta:
         verbose_name = 'Произведение'

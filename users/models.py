@@ -5,10 +5,21 @@ from django.utils.translation import ugettext_lazy as _
 from .managers import UserManager
 
 
+class UserRole(models.TextChoices):
+    USER = 'user'
+    MODERATOR = 'moderator'
+    ADMIN = 'admin'
+
+
 class User(AbstractUser):
     email = models.EmailField(_('email'), max_length=40, unique=True)
     bio = models.TextField(_('description'), max_length=500, blank=True)
-    role = models.CharField(_('role'), max_length=30, default='user')
+    role = models.CharField(
+        _('role'),
+        choices=UserRole.choices,
+        max_length=30,
+        default=UserRole.USER
+    )
     token = models.CharField(_('token'), max_length=36, blank=True)
 
     objects = UserManager()
@@ -29,3 +40,11 @@ class User(AbstractUser):
 
     def check_token(self, token):
         return self.token == token
+
+    @property
+    def is_admin(self):
+        return self.role == UserRole.ADMIN or self.is_staff
+
+    @property
+    def is_moderator(self):
+        return self.role == UserRole.MODERATOR

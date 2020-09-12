@@ -2,7 +2,7 @@ from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
 from .views import (CategoryViewSet, CommentViewSet, CreateUserSet,
-                    GenreViewSet, MeInfoUserSet, MyTokenObtainPairView,
+                    GenreViewSet, MyTokenObtainPairView,
                     ReviewViewSet, TitleViewSet, UsersViewSet)
 
 router = DefaultRouter()
@@ -24,7 +24,6 @@ router.register(
 )
 
 urlpatterns = [
-    path('users/me/', MeInfoUserSet.as_view(), name="me"),
     path('', include(router.urls)),
     path(
         'auth/token/',
