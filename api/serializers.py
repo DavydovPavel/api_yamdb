@@ -147,6 +147,9 @@ class TitleSerializer(serializers.ModelSerializer):
         label='Категория',
         queryset=Category.objects.all()
     )
+    rating = serializers.IntegerField(
+        read_only=True
+    )
 
     class Meta:
         fields = ("id", "name", "year", "description",

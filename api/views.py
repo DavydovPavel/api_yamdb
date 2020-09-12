@@ -80,7 +80,7 @@ class CreateUserSet(viewsets.ViewSetMixin, generics.CreateAPIView):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.annotate(rating=Avg('reviews__score')).all()
     serializer_class = TitleSerializer
     permission_classes = [IsAdminUser | ReadOnly]
     filter_backends = [DjangoFilterBackend]

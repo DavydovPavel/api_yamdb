@@ -11,8 +11,7 @@ class IsAdminUser(permissions.BasePermission):
         user = request.user
         if user.is_anonymous:
             return False
-        is_admin = user.role == 'admin' or user.is_staff
-        return bool(user and is_admin)
+        return bool(user and user.is_admin)
 
 
 class IsAdminOrUserOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
@@ -23,7 +22,8 @@ class IsAdminOrUserOrReadOnly(permissions.IsAuthenticatedOrReadOnly):
                 return True
             else:
                 return False
-        return obj.author == user or user.role in ['moderator', 'admin']
+        is_staff = user.is_admin or user.is_moderator
+        return obj.author == user or is_staff
 
 
 class ReadOnly(permissions.BasePermission):

@@ -1,18 +1,13 @@
 from django.contrib.auth import get_user_model
-from django.core.exceptions import ValidationError
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 User = get_user_model()
 
 
-def range_of_1_10(value):
-    if not (1 <= value <= 10):
-        raise ValidationError('Оценка должна быть в диапазоне от 1 до 10')
-
-
 class Title(models.Model):
-    name = models.CharField("Название", max_length=100)
-    year = models.PositiveSmallIntegerField()
+    name = models.CharField('Название', max_length=100, db_index=True)
+    year = models.PositiveSmallIntegerField('Год')
     category = models.ForeignKey(
         'Category',
         on_delete=models.SET_NULL,
@@ -21,8 +16,13 @@ class Title(models.Model):
         blank=True,
         null=True
     )
-    genre = models.ManyToManyField('Genre', related_name='genres', blank=True)
-    description = models.TextField("Описание", null=True, blank=True)
+    genre = models.ManyToManyField(
+        'Genre',
+        related_name='genres',
+        blank=True,
+        verbose_name='Жанр'
+    )
+    description = models.TextField('Описание', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Произведение'
@@ -32,15 +32,9 @@ class Title(models.Model):
     def __str__(self):
         return self.name
 
-    @property
-    def rating(self):
-        rate = Title.objects.get(
-            pk=self.id).reviews.all().aggregate(models.Avg('score'))
-        return rate['score__avg']
-
 
 class BaseForCategoryGenre(models.Model):
-    name = models.CharField("Наименование", max_length=20)
+    name = models.CharField('Наименование', max_length=20, db_index=True)
     slug = models.SlugField(max_length=20, unique=True)
 
     class Meta:
@@ -71,7 +65,7 @@ class BaseForCommAndRev(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="%(class)ss",
+        related_name='%(class)ss',
         verbose_name='автор'
     )
     pub_date = models.DateTimeField(
@@ -90,11 +84,11 @@ class Review(BaseForCommAndRev):
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
-        related_name="reviews",
+        related_name='reviews',
         verbose_name='произведение'
     )
     score = models.PositiveSmallIntegerField(
-        'оценка', validators=[range_of_1_10]
+        'оценка', validators=[MinValueValidator(0), MaxValueValidator(10)]
     )
 
     class Meta:
@@ -112,7 +106,7 @@ class Comment(BaseForCommAndRev):
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
-        related_name="comments",
+        related_name='comments',
         verbose_name='отзыв'
     )
 
