@@ -1,6 +1,10 @@
 import pytest
 
+<<<<<<< HEAD
 from .common import auth_client, create_categories, create_users_api
+=======
+from .common import create_users_api, auth_client, create_categories
+>>>>>>> 8b79546c699f222dbf0bad1ffdcf2904a23eda34
 
 
 class Test02CategoryAPI:
@@ -123,3 +127,7 @@ class Test02CategoryAPI:
         user, moderator = create_users_api(user_client)
         self.check_permissions(user, 'обычного пользователя', categories)
         self.check_permissions(moderator, 'модератора', categories)
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8b79546c699f222dbf0bad1ffdcf2904a23eda34

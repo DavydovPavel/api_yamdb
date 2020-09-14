@@ -11,7 +11,10 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+<<<<<<< HEAD
 from datetime import timedelta
+=======
+>>>>>>> 8b79546c699f222dbf0bad1ffdcf2904a23eda34
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,10 +41,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+<<<<<<< HEAD
     'rest_framework',
     'django_filters',
     'users',
     'api',
+=======
+>>>>>>> 8b79546c699f222dbf0bad1ffdcf2904a23eda34
 ]
 
 MIDDLEWARE = [
@@ -126,6 +132,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static/'),)
+<<<<<<< HEAD
 
 
 # REST
@@ -151,3 +158,5 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = 'users.User'
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")
+=======
+>>>>>>> 8b79546c699f222dbf0bad1ffdcf2904a23eda34
